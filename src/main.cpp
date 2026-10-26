@@ -73,7 +73,7 @@ class $modify(BufferLayer, GJBaseGameLayer) {
         g_probeDied = false;
         for (int t = 0; t <= look && !g_probeDied; ++t) {
             if (t == delayTicks) GJBaseGameLayer::handleButton(down, button, p1);
-            GJBaseGameLayer::processCommands(TICK);
+            GJBaseGameLayer::processCommands(TICK, false, true);
         }
         g_probing = false;
 
@@ -121,28 +121,28 @@ class $modify(BufferLayer, GJBaseGameLayer) {
         GJBaseGameLayer::handleButton(down, button, isPlayer1);
     }
 
-    void processCommands(float dt) {
-        if (g_probing) return GJBaseGameLayer::processCommands(dt);
+    void processCommands(float dt, bool isHalfTick, bool isLastTick) {
+        if (g_probing) return GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
 
-        auto& f = *m_fields;
+        auto& queue = m_fields->queue;
         if (g_levelReset) {
-            f.queue.clear();
+            queue.clear();
             g_levelReset = false;
         }
 
-        double end = f.clock + dt;
+        double end = m_fields->clock + dt;
         float done = 0.f;
-        while (!f.queue.empty() && f.queue.front().due <= end) {
-            auto in = f.queue.front();
-            f.queue.pop_front();
-            float off = std::clamp(static_cast<float>(in.due - f.clock), done, dt);
+        while (!queue.empty() && queue.front().due <= end) {
+            auto in = queue.front();
+            queue.pop_front();
+            float off = std::clamp(static_cast<float>(in.due - m_fields->clock), done, dt);
             if (off > done) {
-                GJBaseGameLayer::processCommands(off - done);
+                GJBaseGameLayer::processCommands(off - done, isHalfTick, false);
                 done = off;
             }
             GJBaseGameLayer::handleButton(in.down, in.button, in.p1);
         }
-        if (dt - done > 0.f) GJBaseGameLayer::processCommands(dt - done);
-        f.clock = end;
+        GJBaseGameLayer::processCommands(dt - done, isHalfTick, isLastTick);
+        m_fields->clock = end;
     }
 };
