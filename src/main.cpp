@@ -63,11 +63,12 @@ class $modify(BufferLayer, GJBaseGameLayer) {
     // Simulate `look` ticks with the input applied after `delayTicks`; true if it kills us.
     bool probeDies(bool down, int button, bool p1, int delayTicks, int look) {
         auto pl = typeinfo_cast<PlayLayer*>(this);
-        if (!pl) return false;
+        if (!pl || !m_player1) return false;
 
-        auto snapshot = CheckpointObject::create();      // VERIFY
+        // Capture the full game state the way the game does for practice checkpoints.
+        auto snapshot = pl->createCheckpoint();            // VERIFY
+        if (!snapshot) return false;
         snapshot->retain();
-        pl->storeCheckpoint(snapshot);                   // VERIFY
 
         g_probing = true;
         g_probeDied = false;
@@ -77,7 +78,8 @@ class $modify(BufferLayer, GJBaseGameLayer) {
         }
         g_probing = false;
 
-        pl->loadFromCheckpoint(snapshot);                // VERIFY
+        pl->loadFromCheckpoint(snapshot);                  // VERIFY
+        pl->removeLastCheckpoint();                        // VERIFY: drop the extra checkpoint
         snapshot->release();
         return g_probeDied;
     }
