@@ -1,17 +1,60 @@
 {
-	"geode": "$GEODE_VERSION",
-	"gd": {
-		"win": "2.2081",
-		"android": "2.2081",
-		"mac": "2.2081",
-		"ios": "2.2081"
-	},
-	"id": "$MOD_ID",
-	"name": "$MOD_NAME",
-	"version": "$MOD_VERSION",
-	"developer": "$MOD_DEVELOPER",
-	"description": "$MOD_DESCRIPTION",
-	"dependencies": {
-		"geode.node-ids": ">=v1.23.3"
+  "geode": "5.11.2",
+  "gd": {
+    "android": "2.2081"
+  },
+  "version": "v0.1.0",
+  "id": "yourname.predictive-buffer",
+  "name": "Predictive Buffer (Remake)",
+  "developer": "yourname",
+  "description": "Looks a few ticks ahead and delays a tap by the smallest amount that avoids a death.",
+  "settings": {
+    "enabled": {
+      "type": "bool",
+      "name": "Enabled",
+      "default": true
+    },
+    "normal-ticks": {
+      "type": "int",
+      "name": "Normal ticks",
+      "description": "Max delay in ticks for non-wave modes. 4 ticks = 1 frame at 60 fps.",
+      "default": 2,
+      "min": 0,
+      "max": 40,
+      "control": { "slider": true }
+    },
+    "wave-ticks": {
+      "type": "int",
+      "name": "Wave ticks",
+      "description": "Max delay in ticks while in wave (presses and releases).",
+      "default": 2,
+      "min": 0,
+      "max": 40,
+      "control": { "slider": true }
+    },
+    "spam-guard": {
+      "type": "bool",
+      "name": "Spam guard",
+      "description": "Fast clicking passes through untouched.",
+      "default": true
+    },
+    "spam-interval": {
+      "type": "int",
+      "name": "Spam interval (ticks)",
+      "description": "Clicks closer together than this count as spam. 20 ticks = 12 clicks/sec.",
+      "default": 20,
+      "min": 4,
+      "max": 60,
+      "control": { "slider": true }
+    },
+    "look-ahead": {
+      "type": "int",
+      "name": "Look-ahead (ticks)",
+      "description": "How far ahead each check simulates. Higher is more accurate but heavier on weak phones.",
+      "default": 24,
+      "min": 8,
+      "max": 60,
+      "control": { "slider": true }
+    }
+  }
 	}
-}
